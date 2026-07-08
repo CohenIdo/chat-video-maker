@@ -527,6 +527,43 @@ function toast(msg, isError = false) {
 
 /* ----------------------------------- boot ---------------------------------- */
 
+/* ------------------------------ hero live demo ------------------------------ */
+
+(function heroDemo() {
+  const hc = document.getElementById('hero-demo-canvas');
+  if (!hc) return;
+  const hctx = hc.getContext('2d');
+  const demoState = {
+    deviceId: 'iphone-16-pro', orientation: 'portrait', app: 'whatsapp',
+    deviceAngle: 0, showFrame: true, darkMode: false, showTyping: true,
+    showKeyboard: true, contactName: 'Maya', contactPhoto: null, myName: 'Me', myPhoto: null,
+    bgStyle: 'solid', bgColor: 'rgba(0,0,0,0)',
+    messages: [
+      { sender: 'them', text: 'wait… you made this video with a free tool?? 😱' },
+      { sender: 'me', text: 'Yep. Typing, sounds, 4K export' },
+      { sender: 'them', text: 'no watermark?' },
+      { sender: 'me', text: 'None. Scroll down and try it 👇' },
+    ],
+  };
+  const cache = {};
+  const tl = computeTimeline(demoState);
+  let t = 0, last = null;
+  function tick(now) {
+    if (last != null) {
+      t += (now - last) / 1000;
+      if (t > tl.duration + 1) t = 0;
+    }
+    last = now;
+    // only render while visible
+    const r = hc.getBoundingClientRect();
+    if (r.bottom > 0 && r.top < innerHeight) {
+      renderFrame(hctx, hc.width, hc.height, t, demoState, cache);
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
 renderCache.onImageLoad = () => drawPreview();
 wireControls();
 wireEditor();

@@ -69,7 +69,7 @@
 }
 </script>
 
-<link rel="stylesheet" href="css/style.css?v=4" />
+<link rel="stylesheet" href="css/style.css?v=8" />
 
 <!-- Monetization: set your AdSense publisher ID here after approval, e.g. 'ca-pub-1234567890123456' -->
 <script>window.PRESET_APP = 'tiktok';</script>
@@ -99,6 +99,44 @@
 </script>
 </head>
 <body>
+
+<nav class="topnav">
+  <a class="nav-brand" href="./"><span class="logo">💬</span> Conversation Simulator</a>
+  <div class="nav-links">
+    <a href="whatsapp-chat-generator.html">WhatsApp</a>
+    <a href="imessage-generator.html">iMessage</a>
+    <a href="instagram-dm-generator.html">Instagram</a>
+    <a href="tiktok-dm-generator.html">TikTok</a>
+    <a href="tweet-generator.html">Fake Tweet</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="btn-lg solid nav-cta" href="#studio" style="padding:9px 18px; font-size:13.5px;">Start creating</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-title">Fake TikTok DM Generator <span class="grad-text">— free</span></h1>
+      <p class="hero-sub" id="hero-sub">Write TikTok DM conversations with red bubbles and both-side avatars, then export them as texting-story videos ready to post on TikTok, YouTube Shorts or Reels. Keyboard typing animation and sounds included — free, no watermark.</p>
+      <div class="hero-ctas">
+        <a class="btn-lg solid" href="#studio">Start creating — it's free →</a>
+        <a class="btn-lg outline" href="#how">See how it works</a>
+      </div>
+      <div class="trust-chips">
+        <span class="chip"><b>✓</b> 100% free</span>
+        <span class="chip"><b>✓</b> No watermark</span>
+        <span class="chip"><b>✓</b> No signup</span>
+        <span class="chip"><b>✓</b> Private — runs in your browser</span>
+      </div>
+    </div>
+    <div class="hero-demo">
+      <canvas id="hero-demo-canvas" width="440" height="900" aria-label="Live demo of an animated WhatsApp conversation"></canvas>
+      <span class="demo-caption">▲ Live demo — made with this tool</span>
+    </div>
+  </div>
+</header>
+
+<section class="studio-section" id="studio">
 <div class="app">
 
   <aside class="sidebar">
@@ -263,9 +301,83 @@
   </main>
 
 </div>
+</section>
+
+<section class="section" id="features">
+  <div class="section-inner">
+    <h2 class="section-title">Everything you need to fake it beautifully</h2>
+    <p class="section-sub">Every pixel — bubbles, status bars, keyboards, sounds — matches the real apps, so your videos look authentic.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="f-icon">💬</div>
+        <h3>6 chat apps</h3>
+        <p>WhatsApp, iMessage, Instagram DM, Messenger, TikTok DM and Android Messages — authentic bubbles, headers, ticks and input bars, in light or dark mode.</p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">📱</div>
+        <h3>Real devices</h3>
+        <p>iPhone 16 Pro Max to iPhone SE, Galaxy S25 Ultra, Pixel 9 Pro — with Dynamic Island, punch-holes, frames, landscape and a cinematic 3D side view.</p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">⌨️</div>
+        <h3>Keyboard typing + sounds</h3>
+        <p>Messages type out key-by-key on an on-screen keyboard with per-app send &amp; receive sounds — baked right into the exported video.</p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">🎬</div>
+        <h3>4K video export</h3>
+        <p>MP4 export at 720p, 1080p, 2K or 4K — pixel-perfect at the exact device resolution, with audio. No watermark, ever.</p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">🐦</div>
+        <h3>Animated fake tweets</h3>
+        <p>The only fake tweet generator with animated video export — counters roll up and the like heart bursts. <a href="tweet-generator.html">Try it →</a></p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">🔗</div>
+        <h3>PNG &amp; share links</h3>
+        <p>Export still screenshots, or share your whole conversation as a link that anyone can open and edit — no account needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how" style="padding-top:0;">
+  <div class="section-inner">
+    <h2 class="section-title">From idea to video in under a minute</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>Pick app &amp; phone</h3>
+        <p>Choose WhatsApp, iMessage, Instagram and more — then a device like the iPhone 16 Pro Max or Galaxy S25 Ultra.</p>
+      </div>
+      <div class="step">
+        <h3>Write the conversation</h3>
+        <p>Type messages for both sides, set names and photos, reorder freely. The preview animates instantly.</p>
+      </div>
+      <div class="step">
+        <h3>Export &amp; post</h3>
+        <p>Download an MP4 with typing animation and sounds — or a PNG screenshot — and post it anywhere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="generators" style="padding-top:0;">
+  <div class="section-inner">
+    <h2 class="section-title">One tool, every platform</h2>
+    <div class="gen-cards">
+      <a class="gen-card" href="whatsapp-chat-generator.html"><span class="g-icon">🟢</span><span>WhatsApp Chat<small>Video &amp; screenshot generator</small></span></a>
+      <a class="gen-card" href="imessage-generator.html"><span class="g-icon">🔵</span><span>iMessage<small>iPhone text video maker</small></span></a>
+      <a class="gen-card" href="instagram-dm-generator.html"><span class="g-icon">🟣</span><span>Instagram DM<small>Direct message generator</small></span></a>
+      <a class="gen-card" href="messenger-chat-generator.html"><span class="g-icon">💠</span><span>Messenger<small>Facebook chat generator</small></span></a>
+      <a class="gen-card" href="tiktok-dm-generator.html"><span class="g-icon">⬛</span><span>TikTok DM<small>Chat story video maker</small></span></a>
+      <a class="gen-card" href="tweet-generator.html"><span class="g-icon">🐦</span><span>Fake Tweet<small>Animated tweet videos</small></span></a>
+    </div>
+  </div>
+</section>
 
 <!-- SEO / content section (also required for ad-network approval) -->
-<section class="content-section">
+<section class="content-section" id="faq">
   <div class="content-inner">
     <div class="ad-slot" style="display:none"></div>
 
@@ -335,10 +447,10 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="js/devices.js?v=7"></script>
-<script src="js/sounds.js?v=7"></script>
-<script src="js/renderer.js?v=7"></script>
-<script src="js/export.js?v=7"></script>
-<script src="js/app.js?v=7"></script>
+<script src="js/devices.js?v=8"></script>
+<script src="js/sounds.js?v=8"></script>
+<script src="js/renderer.js?v=8"></script>
+<script src="js/export.js?v=8"></script>
+<script src="js/app.js?v=8"></script>
 </body>
 </html>

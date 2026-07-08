@@ -67,6 +67,13 @@ for p in PAGES:
     # preset the app skin before app.js loads
     out = out.replace('<script>window.ADSENSE_CLIENT',
                       f"<script>window.PRESET_APP = '{p['app']}';</script>\n<script>window.ADSENSE_CLIENT")
+    # hero swaps (keep the gradient span on the last word)
+    hero_words = p['h2'].split(' — ')[0]
+    out = re.sub(r'<h1 id="hero-title">.*?</h1>',
+                 f'<h1 id="hero-title">{hero_words} <span class="grad-text">— free</span></h1>',
+                 out, count=1, flags=re.S)
+    out = re.sub(r'(<p class="hero-sub" id="hero-sub">).*?(</p>)',
+                 rf"\g<1>{p['intro']}\g<2>", out, count=1, flags=re.S)
     # content section swaps
     out = re.sub(r'<h2>Create Fake Chat Videos in Your Browser[^<]*</h2>', f"<h2>{p['h2']}</h2>", out, count=1)
     out = re.sub(
