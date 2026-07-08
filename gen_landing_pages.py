@@ -76,8 +76,10 @@ for p in PAGES:
         f.write(out)
     print('wrote', p['file'])
 
-# refresh sitemap
-urls = [BASE, BASE + 'privacy.html', BASE + 'terms.html'] + [BASE + p['file'] for p in PAGES]
+# refresh sitemap (EXTRA_PAGES are standalone tools not generated from index.html)
+EXTRA_PAGES = ['tweet-generator.html']
+urls = [BASE, BASE + 'privacy.html', BASE + 'terms.html'] \
+    + [BASE + p['file'] for p in PAGES] + [BASE + e for e in EXTRA_PAGES]
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for i, u in enumerate(urls):
