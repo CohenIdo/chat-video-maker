@@ -6,8 +6,15 @@ const Exporter = {
   active: false,
   _cancel: false,
 
-  pickMimeType() {
-    const candidates = [
+  pickMimeType(withAudio) {
+    const candidates = withAudio ? [
+      'video/mp4;codecs=avc1.640033,mp4a.40.2',
+      'video/mp4;codecs=avc1,mp4a.40.2',
+      'video/mp4',
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm',
+    ] : [
       'video/mp4;codecs=avc1.640033',
       'video/mp4;codecs=avc1',
       'video/mp4',
@@ -40,10 +47,17 @@ const Exporter = {
       const timeline = computeTimeline(state);
       const speed = state.playbackSpeed || 1;
 
-      const mimeType = this.pickMimeType();
+      // include synthesized sounds in the recording when enabled
+      const wantAudio = !!state.soundsEnabled && !!(window.AudioContext || window.webkitAudioContext);
+      const audioStream = wantAudio ? Sounds.attachRecorder() : null;
+
+      const mimeType = this.pickMimeType(!!audioStream);
       if (!mimeType) throw new Error('MediaRecorder is not supported in this browser.');
 
       const stream = canvas.captureStream(fps);
+      if (audioStream) {
+        for (const tr of audioStream.getAudioTracks()) stream.addTrack(tr);
+      }
       const bitrate = Math.min(60_000_000, Math.max(6_000_000, Math.round(width * height * fps * 0.12)));
       const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: bitrate });
       const chunks = [];
@@ -70,8 +84,12 @@ const Exporter = {
           let dt = (now - lastNow) / 1000;
           lastNow = now;
           if (dt > 0.25) dt = 1 / fps;
+          const prevT = contentT;
           contentT = Math.min(contentT + dt * speed, timeline.duration);
           renderFrame(ctx, width, height, contentT, state, cache);
+          if (audioStream) {
+            triggerTimelineSounds(Sounds, timeline, state.messages, state.showKeyboard, prevT, contentT);
+          }
           onProgress && onProgress(Math.min(1, contentT / timeline.duration));
           if (contentT >= timeline.duration) { clearInterval(timer); resolve(); }
         }, 1000 / fps);
@@ -80,6 +98,7 @@ const Exporter = {
       recorder.stop();
       await done;
       stream.getTracks().forEach(tr => tr.stop());
+      if (audioStream) Sounds.detachRecorder();
 
       if (this._cancel) {
         onDone && onDone(null);
@@ -95,6 +114,7 @@ const Exporter = {
       console.error(err);
       onError && onError(err);
     } finally {
+      Sounds.detachRecorder();
       this.active = false;
     }
   },

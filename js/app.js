@@ -17,6 +17,8 @@ const state = {
   showFrame: true,
   darkMode: false,
   showTyping: true,
+  showKeyboard: true,
+  soundsEnabled: true,
   contactName: 'Alex',
   contactPhoto: null,
   myName: 'Me',
@@ -38,6 +40,21 @@ try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
   if (saved && Array.isArray(saved.messages)) Object.assign(state, saved);
 } catch { /* fresh start */ }
+
+// Shared-conversation links: #s=<base64 json> overrides the saved state.
+try {
+  const m = location.hash.match(/[#&]s=([^&]+)/);
+  if (m) {
+    const shared = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+    if (shared && Array.isArray(shared.messages)) {
+      delete shared.contactPhoto; delete shared.myPhoto; // photos never travel in links
+      Object.assign(state, shared);
+    }
+  }
+} catch { /* malformed share link — ignore */ }
+
+// Landing pages (e.g. whatsapp-chat-generator.html) preset the chat app.
+if (window.PRESET_APP) state.app = window.PRESET_APP;
 
 function persist() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* full/blocked */ }
@@ -88,9 +105,13 @@ function drawPreview() {
 function loop(now) {
   if (playback.playing) {
     if (playback.lastFrame != null) {
+      const prevT = playback.time;
       playback.time += ((now - playback.lastFrame) / 1000) * state.playbackSpeed;
       const dur = timelineDuration();
       if (playback.time >= dur + 0.6) playback.time = 0; // loop with a beat of rest
+      if (state.soundsEnabled && Sounds.ctx && renderCache.timeline) {
+        triggerTimelineSounds(Sounds, renderCache.timeline, state.messages, state.showKeyboard, prevT, playback.time);
+      }
     }
     playback.lastFrame = now;
     drawPreview();
@@ -263,6 +284,8 @@ function wireControls() {
     ['frame-toggle', 'showFrame', {}],
     ['dark-toggle', 'darkMode', {}],
     ['typing-toggle', 'showTyping', { restart: true }],
+    ['keyboard-toggle', 'showKeyboard', { restart: true }],
+    ['sounds-toggle', 'soundsEnabled', {}],
   ];
   for (const [id, key, opts] of toggles) {
     $(id).checked = state[key];
@@ -336,7 +359,50 @@ function wireControls() {
 
   // export
   $('export-btn').addEventListener('click', startExport);
+  $('export-png-btn').addEventListener('click', exportScreenshot);
+  $('share-btn').addEventListener('click', shareConversation);
   $('cancel-export-btn').addEventListener('click', () => Exporter.cancel());
+
+  // browsers require a user gesture before audio can start
+  document.addEventListener('pointerdown', () => {
+    if (state.soundsEnabled) Sounds.ensure();
+  }, { once: false });
+}
+
+/* ------------------------------ PNG screenshot ------------------------------ */
+
+function exportScreenshot() {
+  const { width, height } = resolveExportSize(state);
+  const c = document.createElement('canvas');
+  c.width = width; c.height = height;
+  renderFrame(c.getContext('2d'), width, height, playback.time, state, {});
+  c.toBlob((blob) => {
+    if (!blob) { toast('Screenshot failed', true); return; }
+    const device = getDevice(state.deviceId);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `chat_${state.app}_${device.id}_${width}x${height}.png`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 30000);
+    toast(`Saved PNG screenshot (${width}×${height})`);
+  }, 'image/png');
+}
+
+/* -------------------------------- share links ------------------------------- */
+
+function shareConversation() {
+  const shared = {
+    app: state.app, deviceId: state.deviceId, orientation: state.orientation,
+    showFrame: state.showFrame, darkMode: state.darkMode, showTyping: state.showTyping,
+    showKeyboard: state.showKeyboard, deviceAngle: state.deviceAngle,
+    contactName: state.contactName, myName: state.myName,
+    messages: state.messages,
+  };
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(shared))));
+  const url = location.origin + location.pathname + '#s=' + encoded;
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+    .then(() => toast('Share link copied — anyone can open & edit this conversation'))
+    .catch(() => { prompt('Copy this share link:', url); });
 }
 
 /* ------------------------------ message editor ----------------------------- */

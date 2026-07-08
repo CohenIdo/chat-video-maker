@@ -219,6 +219,11 @@ function computeTimeline(state) {
       typingDur = Math.min(2.6, Math.max(1.0, 0.8 + len * 0.03));
       typingStart = t;
       t += typingDur;
+    } else if (m.sender === 'me' && state.showKeyboard) {
+      // TextingStory-style: the message is typed out on the keyboard
+      typingDur = Math.min(3.5, Math.max(0.5, len * 0.055));
+      typingStart = t;
+      t += typingDur + 0.15; // brief beat between last key and send
     }
     const appearAt = t;
     events.push({ index: i, typingStart, typingDur, appearAt });
@@ -642,9 +647,36 @@ function drawHeader(ctx, d, chatW, sideInset, topSafe, style, state) {
 
 /* -------------------------------- input bar -------------------------------- */
 
-function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
+function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style, opts = {}) {
   const barH = 56;
-  const y0 = lh - bottomSafe - barH;
+  const y0 = opts.y0 !== undefined ? opts.y0 : lh - bottomSafe - barH;
+  const typed = opts.typedText || '';
+  const caretOn = opts.caretOn && (opts.time * 2.2) % 1 < 0.6;
+  const textColor = style.recvText;
+
+  // Draws placeholder or the live typed text (with caret) inside a pill.
+  function pillText(x, y, maxW, font) {
+    ctx.font = font;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    if (!typed) {
+      ctx.fillStyle = style.inputText;
+      ctx.fillText(style.inputPlaceholder, x, y);
+      return;
+    }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x - 2, y - 14, maxW + 4, 28);
+    ctx.clip();
+    ctx.fillStyle = textColor;
+    const w = ctx.measureText(typed).width;
+    const tx = w > maxW ? x + maxW - w : x; // overflow: keep the tail visible
+    ctx.fillText(typed, tx, y);
+    if (caretOn) {
+      ctx.fillStyle = style.accent;
+      ctx.fillRect(Math.min(x + maxW, tx + w) + 1.5, y - 10, 2, 20);
+    }
+    ctx.restore();
+  }
   ctx.save();
   ctx.fillStyle = style.inputBarBg;
   ctx.fillRect(-sideInset, y0, chatW + sideInset * 2, barH + bottomSafe);
@@ -657,10 +689,7 @@ function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
     roundRect(ctx, px, py, pw, ph, ph / 2); ctx.fill();
     // emoji face
     smiley(px + 21, py + ph / 2);
-    ctx.fillStyle = style.inputText;
-    ctx.font = `400 15.5px ${FONT_STACK}`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(style.inputPlaceholder, px + 40, py + ph / 2 + 0.5);
+    pillText(px + 40, py + ph / 2 + 0.5, pw - 82, `400 15.5px ${FONT_STACK}`);
     // camera glyph in pill
     camera(px + pw - 22, py + ph / 2);
     // green mic button
@@ -677,10 +706,7 @@ function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
     ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(px + 21, py + ph / 2, 15, 0, Math.PI * 2); ctx.fill();
     camera(px + 21, py + ph / 2, '#fff');
-    ctx.fillStyle = style.inputText;
-    ctx.font = `400 15px ${FONT_STACK}`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(style.inputPlaceholder, px + 44, py + ph / 2 + 0.5);
+    pillText(px + 44, py + ph / 2 + 0.5, pw - 80, `400 15px ${FONT_STACK}`);
     mic(px + pw - 22, py + ph / 2, style.inputText);
   } else if (v === 'messenger') {
     const cy = y0 + barH / 2;
@@ -692,20 +718,14 @@ function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
     const px = 100, pw = chatW - px - 46, ph = 38, py = y0 + (barH - ph) / 2;
     ctx.fillStyle = style.inputBg;
     roundRect(ctx, px, py, pw, ph, ph / 2); ctx.fill();
-    ctx.fillStyle = style.inputText;
-    ctx.font = `400 15px ${FONT_STACK}`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(style.inputPlaceholder, px + 14, py + ph / 2 + 0.5);
+    pillText(px + 14, py + ph / 2 + 0.5, pw - 28, `400 15px ${FONT_STACK}`);
     // thumb
     thumb(chatW - 24, cy, style.accent);
   } else if (v === 'tiktok') {
     const px = 12, pw = chatW - 24 - 46, ph = 40, py = y0 + (barH - ph) / 2;
     ctx.fillStyle = style.inputBg;
     roundRect(ctx, px, py, pw, ph, ph / 2); ctx.fill();
-    ctx.fillStyle = style.inputText;
-    ctx.font = `400 15px ${FONT_STACK}`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(style.inputPlaceholder, px + 16, py + ph / 2 + 0.5);
+    pillText(px + 16, py + ph / 2 + 0.5, pw - 52, `400 15px ${FONT_STACK}`);
     smiley(px + pw - 20, py + ph / 2);
     // red send circle
     ctx.fillStyle = style.accent;
@@ -719,10 +739,7 @@ function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
     const px = 14, pw = chatW - px * 2, ph = 40, py = y0 + (barH - ph) / 2;
     ctx.fillStyle = style.inputBg;
     roundRect(ctx, px, py, pw, ph, ph / 2); ctx.fill();
-    ctx.fillStyle = style.inputText;
-    ctx.font = `400 15px ${FONT_STACK}`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(style.inputPlaceholder, px + 44, py + ph / 2 + 0.5);
+    pillText(px + 44, py + ph / 2 + 0.5, pw - 84, `400 15px ${FONT_STACK}`);
     smiley(px + 24, py + ph / 2);
     plus(px + pw - 22, py + ph / 2, style.inputText);
   } else {
@@ -735,10 +752,7 @@ function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
     roundRect(ctx, px, py, pw, ph, ph / 2); ctx.fill();
     ctx.strokeStyle = style.separator; ctx.lineWidth = 1;
     roundRect(ctx, px, py, pw, ph, ph / 2); ctx.stroke();
-    ctx.fillStyle = style.inputText;
-    ctx.font = `400 16px ${FONT_STACK}`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(style.inputPlaceholder, px + 14, py + ph / 2 + 0.5);
+    pillText(px + 14, py + ph / 2 + 0.5, pw - 44, `400 16px ${FONT_STACK}`);
     mic(px + pw - 17, py + ph / 2, style.inputText);
   }
   ctx.restore();
@@ -775,6 +789,75 @@ function drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style) {
     roundRect(ctx, cx - 9, cy - 1, 5, 9, 1.5); ctx.fill();
     roundRect(ctx, cx - 3, cy - 8, 11, 16, 4); ctx.fill();
   }
+}
+
+/* --------------------------------- keyboard -------------------------------- */
+
+// iOS-style QWERTY keyboard. activeChar highlights the key being "pressed".
+function drawKeyboard(ctx, lw, lh, KH, dark, os, activeChar) {
+  const y0 = lh - KH;
+  ctx.save();
+  ctx.fillStyle = dark ? '#2b2b2e' : (os === 'ios' ? '#d3d6dc' : '#e8eaf0');
+  ctx.fillRect(0, y0, lw, KH);
+
+  const keyFill = dark ? '#6c6c70' : '#ffffff';
+  const specFill = dark ? '#4a4a4e' : '#b3bac3';
+  const activeFill = dark ? '#9a9aa2' : '#8fb0e8';
+  const txt = dark ? '#ffffff' : '#1c1c1e';
+
+  const sideM = 4, gap = 5.5, topPad = 9;
+  const rowH = (KH - topPad - gap * 3 - 14) / 4;
+  const keyW = (lw - sideM * 2 - gap * 9) / 10;
+  const rows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+
+  const key = (x, y, w, label, isSpec, isActive, fontSize) => {
+    ctx.fillStyle = isActive ? activeFill : (isSpec ? specFill : keyFill);
+    // subtle bottom edge like iOS keys
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowOffsetY = 1;
+    ctx.shadowBlur = 0;
+    roundRect(ctx, x, y, w, rowH, 5.5);
+    ctx.fill();
+    ctx.restore();
+    if (label) {
+      ctx.fillStyle = txt;
+      ctx.font = `400 ${fontSize || 16}px ${FONT_STACK}`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, x + w / 2, y + rowH / 2 + 0.5);
+    }
+  };
+
+  let y = y0 + topPad;
+  // letter rows
+  rows.forEach((row, ri) => {
+    let x = ri === 0 ? sideM
+      : ri === 1 ? (lw - (9 * keyW + 8 * gap)) / 2
+      : sideM + keyW * 1.4 + gap;
+    if (ri === 2) x = (lw - (7 * keyW + 6 * gap)) / 2;
+    for (const ch of row) {
+      key(x, y, keyW, ch.toUpperCase(), false, activeChar === ch, 16);
+      x += keyW + gap;
+    }
+    if (ri === 2) {
+      // shift + backspace flank the bottom letter row
+      const sw = keyW * 1.35;
+      key(sideM, y, sw, '⇧', true, false, 15);
+      key(lw - sideM - sw, y, sw, '⌫', true, false, 15);
+    }
+    y += rowH + gap;
+  });
+
+  // bottom row: 123 / space / return
+  const numW = keyW * 1.35 + gap + keyW * 0.35;
+  const retW = keyW * 2.2;
+  const spaceW = lw - sideM * 2 - numW - retW - gap * 2;
+  const spaceActive = activeChar !== null && activeChar !== undefined && !/[a-z]/.test(activeChar || '');
+  key(sideM, y, numW, '123', true, false, 13);
+  key(sideM + numW + gap, y, spaceW, 'space', false, spaceActive, 13.5);
+  key(lw - sideM - retW, y, retW, 'return', true, false, 13.5);
+
+  ctx.restore();
 }
 
 /* ------------------------------ frame hardware ----------------------------- */
@@ -1011,7 +1094,7 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
     cache.layout = layoutChat(chatW, state, style);
     cache.layoutKey = layoutKey;
   }
-  const tlKey = JSON.stringify([state.messages.map(m => [m.sender, (m.text || '').length]), state.showTyping]);
+  const tlKey = JSON.stringify([state.messages.map(m => [m.sender, (m.text || '').length]), state.showTyping, !!state.showKeyboard]);
   if (!cache.timeline || cache.timelineKey !== tlKey) {
     cache.timeline = computeTimeline(state);
     cache.timelineKey = tlKey;
@@ -1028,7 +1111,12 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
   ctx.save();
   ctx.translate(sideInset, 0);
   const headerH = drawHeader(ctx, d, chatW, sideInset, topSafe, style, state);
-  const inputTop = lh - bottomSafe - 56;
+
+  // on-screen keyboard (TextingStory-style) shortens the chat area
+  const KH = state.showKeyboard
+    ? (d.landscape ? Math.min(lh * 0.46, 220) : Math.max(200, Math.min(292, lw * 0.72)))
+    : 0;
+  const inputTop = KH ? lh - KH - 56 : lh - bottomSafe - 56;
   const contentTop = headerH;
   const visibleH = inputTop - contentTop - 8;
 
@@ -1037,8 +1125,25 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
   for (const ev of events) {
     if (t >= ev.appearAt) lastAppeared = ev.index;
     else {
-      if (ev.typingStart !== null && t >= ev.typingStart) typingActive = true;
+      if (ev.typingStart !== null && t >= ev.typingStart && state.messages[ev.index].sender === 'them') {
+        typingActive = true;
+      }
       break;
+    }
+  }
+
+  // ---- outgoing message being typed on the keyboard right now
+  let typedText = '', activeChar = null;
+  if (KH) {
+    const meEv = events.find(e =>
+      e.typingStart !== null && t >= e.typingStart && t < e.appearAt &&
+      state.messages[e.index].sender === 'me');
+    if (meEv) {
+      const full = state.messages[meEv.index].text || '';
+      const p = clamp01((t - meEv.typingStart) / meEv.typingDur);
+      const n = Math.min(full.length, Math.ceil(p * full.length));
+      typedText = full.slice(0, n);
+      if (n > 0 && n < full.length + 1) activeChar = (full[n - 1] || '').toLowerCase();
     }
   }
 
@@ -1058,6 +1163,7 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
     const cur = targetScroll(lastAppeared, typingActive);
     let changeAt = 0, prevTarget = 0;
     for (const ev of events) {
+      const isThem = state.messages[ev.index].sender === 'them';
       if (ev.typingStart !== null && t >= ev.typingStart && t < ev.appearAt) {
         changeAt = ev.typingStart;
         prevTarget = targetScroll(ev.index - 1, false);
@@ -1065,7 +1171,7 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
       }
       if (t >= ev.appearAt) {
         changeAt = ev.appearAt;
-        prevTarget = ev.typingStart !== null
+        prevTarget = (ev.typingStart !== null && isThem)
           ? targetScroll(ev.index - 1, true)
           : targetScroll(ev.index - 1, false);
       }
@@ -1175,7 +1281,8 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
       x: layout.sideMargin + layout.recvIndent, y: ty, w: tw, h: th,
       isMe: false, showTail: style.tail !== 'none', groupFirst: true, groupLast: true,
     };
-    const ev = events.find(e => e.typingStart !== null && t >= e.typingStart && t < e.appearAt);
+    const ev = events.find(e => e.typingStart !== null && t >= e.typingStart && t < e.appearAt
+      && state.messages[e.index].sender === 'them');
     const tp = ev ? easeOutBack(clamp01((t - ev.typingStart) / 0.25)) : 1;
     ctx.save();
     ctx.globalAlpha = Math.min(1, tp * 2);
@@ -1205,7 +1312,20 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
 
   ctx.restore(); // content clip
 
-  drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style);
+  drawInputBar(ctx, d, chatW, sideInset, lh, bottomSafe, style, {
+    y0: inputTop,
+    typedText: typedText,
+    caretOn: !!typedText || (KH > 0 && !!events.find(e =>
+      e.typingStart !== null && t >= e.typingStart && t < e.appearAt &&
+      state.messages[e.index].sender === 'me')),
+    time: t,
+  });
+  if (KH) {
+    ctx.save();
+    ctx.translate(-sideInset, 0); // keyboard spans the full screen width
+    drawKeyboard(ctx, lw, lh, KH, state.darkMode, d.os, typedText ? activeChar : null);
+    ctx.restore();
+  }
   ctx.restore(); // side-inset translate
 
   drawStatusBar(ctx, d, lw, style.statusBar);

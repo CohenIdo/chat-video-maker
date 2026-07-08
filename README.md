@@ -65,7 +65,20 @@ Selectable app skins, each with authentic bubbles, header, input bar, and detail
 ### Conversation
 - Editable message list: add sent/received messages, reorder, delete, multi-line text.
 - Typing indicator with bouncing dots before received messages.
+- TextingStory-style on-screen keyboard: outgoing messages are typed out
+  character-by-character with the pressed key highlighted.
+- Synthesized sound effects (key clicks, send/receive pops) — included in the
+  exported video's audio track.
 - Emoji-only messages render large.
+- Share links: the whole conversation encodes into a URL (`#s=…`) — no backend.
+
+### Export
+- Video (MP4/WebM, with audio) or PNG screenshot, both at exact device resolution.
+
+### SEO landing pages
+`gen_landing_pages.py` stamps out per-app pages (whatsapp-chat-generator.html,
+imessage-generator.html, …) from index.html and refreshes sitemap.xml. Re-run it
+after editing index.html.
 
 ### Preview
 - Live animated preview that updates instantly on any change.
