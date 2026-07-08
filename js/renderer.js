@@ -613,12 +613,13 @@ function drawHeader(ctx, d, chatW, sideInset, topSafe, style, state) {
     ctx.fillStyle = style.headerText;
     ctx.font = `600 16.5px ${FONT_STACK}`;
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    const nameY = style.headerSubtitle ? cy - 8 : cy;
+    const subtitle = (state.contactStatus || '').trim() || style.headerSubtitle;
+    const nameY = subtitle ? cy - 8 : cy;
     ctx.fillText(name, ax + ar + 11, nameY + 1);
-    if (style.headerSubtitle) {
+    if (subtitle) {
       ctx.fillStyle = style.headerSub;
       ctx.font = `400 12px ${FONT_STACK}`;
-      ctx.fillText(style.headerSubtitle, ax + ar + 11, cy + 10);
+      ctx.fillText(subtitle, ax + ar + 11, cy + 10);
     }
     // right-side icons
     const iconColor = style.id === 'whatsapp' ? style.headerText

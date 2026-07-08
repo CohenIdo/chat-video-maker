@@ -20,6 +20,7 @@ const state = {
   showKeyboard: true,
   soundsEnabled: true,
   contactName: 'Alex',
+  contactStatus: '',
   contactPhoto: null,
   myName: 'Me',
   myPhoto: null,
@@ -166,16 +167,37 @@ function syncControlVisibility() {
   $('landscape-btn').disabled = !device.supportsLandscape;
 }
 
-function buildAppSelect() {
-  const sel = $('app-select');
-  sel.innerHTML = '';
+// Brand-flavored inline SVG icons for the app pills (original simplified marks).
+const APP_ICONS = {
+  whatsapp: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#25D366"/><path d="M17.4 14.4c-.3-.15-1.65-.8-1.9-.9-.26-.1-.45-.15-.63.14-.19.28-.72.9-.88 1.08-.16.19-.33.21-.6.07-.28-.14-1.18-.44-2.24-1.39-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.12.28-.32.42-.48.14-.16.19-.28.28-.47.09-.19.05-.35-.02-.49-.07-.14-.63-1.5-.86-2.06-.23-.54-.46-.47-.63-.48h-.54c-.19 0-.49.07-.75.35-.26.28-.98.96-.98 2.34s1 2.72 1.15 2.9c.14.19 1.98 3.02 4.8 4.23.67.29 1.19.46 1.6.6.67.21 1.28.18 1.77.11.54-.08 1.65-.67 1.89-1.32.23-.65.23-1.2.16-1.32-.07-.12-.26-.19-.53-.33z" fill="#fff"/></svg>',
+  imessage: '<svg viewBox="0 0 24 24"><defs><linearGradient id="ic-im" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5BF675"/><stop offset="1" stop-color="#0BD318"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#ic-im)"/><path d="M12 5c-4.4 0-8 2.9-8 6.5 0 2 1.1 3.8 2.9 5-.1 1-.6 1.9-1.2 2.6 1.4-.2 2.6-.7 3.5-1.4.9.2 1.8.4 2.8.4 4.4 0 8-2.9 8-6.5S16.4 5 12 5z" fill="#fff"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24"><defs><linearGradient id="ic-ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FD5949"/><stop offset=".5" stop-color="#D6249F"/><stop offset="1" stop-color="#8134AF"/></linearGradient></defs><rect width="24" height="24" rx="7" fill="url(#ic-ig)"/><rect x="5.5" y="5.5" width="13" height="13" rx="4" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16.4" cy="7.6" r="1" fill="#fff"/></svg>',
+  messenger: '<svg viewBox="0 0 24 24"><defs><linearGradient id="ic-ms" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00B2FF"/><stop offset="1" stop-color="#006AFF"/></linearGradient></defs><circle cx="12" cy="12" r="12" fill="url(#ic-ms)"/><path d="M12 5.5c-3.9 0-7 2.9-7 6.5 0 2 1 3.9 2.6 5.1V20l2.4-1.3c.6.2 1.3.3 2 .3 3.9 0 7-2.9 7-6.5s-3.1-7-7-7zm.8 8.7L11 12.3l-3.5 1.9 3.9-4.1 1.8 1.9 3.4-1.9-3.8 4.1z" fill="#fff"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#010101"/><path d="M16.6 8.1a4.3 4.3 0 0 1-2.5-2.4h-2.2v9.2a1.9 1.9 0 1 1-1.9-1.9c.2 0 .4 0 .6.1v-2.3a4.2 4.2 0 0 0-.6 0 4.2 4.2 0 1 0 4.2 4.2v-4.5a6.4 6.4 0 0 0 3.4 1V9.2c-.3 0-.7-.05-1-.15z" fill="#fff"/></svg>',
+  android: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1A73E8"/><path d="M6 6.5h12a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H9l-3 2.5v-10.5a1 1 0 0 1 1-1z" fill="#fff"/></svg>',
+};
+const APP_SHORT_NAMES = {
+  whatsapp: 'WhatsApp', imessage: 'iMessage', instagram: 'Instagram',
+  messenger: 'Messenger', tiktok: 'TikTok', android: 'Android',
+};
+
+function buildAppPills() {
+  const wrap = $('app-pills');
+  wrap.innerHTML = '';
   for (const a of APPS) {
-    const opt = document.createElement('option');
-    opt.value = a.id;
-    opt.textContent = a.name;
-    sel.appendChild(opt);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'app-pill' + (a.id === state.app ? ' active' : '');
+    b.innerHTML = (APP_ICONS[a.id] || '') + '<span>' + (APP_SHORT_NAMES[a.id] || a.name) + '</span>';
+    b.title = a.name;
+    b.addEventListener('click', () => {
+      if (state.app === a.id) return;
+      state.app = a.id;
+      buildAppPills();
+      invalidate();
+    });
+    wrap.appendChild(b);
   }
-  sel.value = state.app;
 }
 
 // Downscale an uploaded photo to a small square dataURL (keeps localStorage light).
@@ -226,10 +248,11 @@ function wirePhoto(fileId, clearId, thumbId, key) {
 function wireControls() {
   buildDeviceSelect();
   buildExportSelect();
-  buildAppSelect();
+  buildAppPills();
 
-  $('app-select').addEventListener('change', (e) => {
-    state.app = e.target.value;
+  $('contact-status').value = state.contactStatus || '';
+  $('contact-status').addEventListener('input', (e) => {
+    state.contactStatus = e.target.value;
     invalidate();
   });
 
@@ -407,22 +430,59 @@ function shareConversation() {
 
 /* ------------------------------ message editor ----------------------------- */
 
+const ICON_UP = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V3M4 7l4-4 4 4"/></svg>';
+const ICON_DOWN = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M4 9l4 4 4-4"/></svg>';
+const ICON_TRASH = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5h11M6.5 2.5h3M5.5 4.5l.5 9h4l.5-9M6.8 7v4M9.2 7v4"/></svg>';
+
 function renderMessageList() {
   const list = $('message-list');
   list.innerHTML = '';
   state.messages.forEach((m, i) => {
-    const row = document.createElement('div');
-    row.className = 'msg-row' + (m.sender === 'me' ? ' me' : '');
+    const card = document.createElement('div');
+    card.className = 'msg-card' + (m.sender === 'me' ? ' me' : '');
 
-    const senderBtn = document.createElement('button');
-    senderBtn.className = 'sender-btn';
-    senderBtn.textContent = m.sender === 'me' ? 'Me' : 'Them';
-    senderBtn.title = 'Toggle sender';
-    senderBtn.addEventListener('click', () => {
-      m.sender = m.sender === 'me' ? 'them' : 'me';
-      renderMessageList();
-      invalidate({ restart: true });
+    const top = document.createElement('div');
+    top.className = 'msg-card-top';
+
+    const pills = document.createElement('div');
+    pills.className = 'sender-pills';
+    for (const [label, val] of [['Contact', 'them'], ['You', 'me']]) {
+      const p = document.createElement('button');
+      p.type = 'button';
+      p.className = 's-pill' + (m.sender === val ? ' active' : '');
+      p.textContent = label;
+      p.addEventListener('click', () => {
+        if (m.sender === val) return;
+        m.sender = val;
+        renderMessageList();
+        invalidate({ restart: true });
+      });
+      pills.appendChild(p);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'msg-actions';
+    const mkBtn = (svg, title, fn, disabled) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = svg; b.title = title; b.disabled = !!disabled;
+      b.addEventListener('click', fn);
+      actions.appendChild(b);
+    };
+    mkBtn(ICON_UP, 'Move up', () => {
+      [state.messages[i - 1], state.messages[i]] = [state.messages[i], state.messages[i - 1]];
+      renderMessageList(); invalidate({ restart: true });
+    }, i === 0);
+    mkBtn(ICON_DOWN, 'Move down', () => {
+      [state.messages[i + 1], state.messages[i]] = [state.messages[i], state.messages[i + 1]];
+      renderMessageList(); invalidate({ restart: true });
+    }, i === state.messages.length - 1);
+    mkBtn(ICON_TRASH, 'Delete', () => {
+      state.messages.splice(i, 1);
+      renderMessageList(); invalidate({ restart: true });
     });
+
+    top.append(pills, actions);
 
     const input = document.createElement('textarea');
     input.value = m.text;
@@ -436,29 +496,8 @@ function renderMessageList() {
     });
     requestAnimationFrame(autosize);
 
-    const controls = document.createElement('div');
-    controls.className = 'msg-controls';
-    const mkBtn = (label, title, fn, disabled) => {
-      const b = document.createElement('button');
-      b.textContent = label; b.title = title; b.disabled = !!disabled;
-      b.addEventListener('click', fn);
-      controls.appendChild(b);
-    };
-    mkBtn('↑', 'Move up', () => {
-      [state.messages[i - 1], state.messages[i]] = [state.messages[i], state.messages[i - 1]];
-      renderMessageList(); invalidate({ restart: true });
-    }, i === 0);
-    mkBtn('↓', 'Move down', () => {
-      [state.messages[i + 1], state.messages[i]] = [state.messages[i], state.messages[i + 1]];
-      renderMessageList(); invalidate({ restart: true });
-    }, i === state.messages.length - 1);
-    mkBtn('✕', 'Delete', () => {
-      state.messages.splice(i, 1);
-      renderMessageList(); invalidate({ restart: true });
-    });
-
-    row.append(senderBtn, input, controls);
-    list.appendChild(row);
+    card.append(top, input);
+    list.appendChild(card);
   });
 }
 

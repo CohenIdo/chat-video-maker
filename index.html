@@ -69,7 +69,7 @@
 }
 </script>
 
-<link rel="stylesheet" href="css/style.css?v=8" />
+<link rel="stylesheet" href="css/style.css?v=9" />
 
 <!-- Monetization: set your AdSense publisher ID here after approval, e.g. 'ca-pub-1234567890123456' -->
 <script>window.ADSENSE_CLIENT = '';</script>
@@ -152,6 +152,57 @@
     </header>
 
     <section class="panel">
+      <h2>Chat app</h2>
+      <div id="app-pills" class="app-pills"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Contact</h2>
+      <div class="contact-editor">
+        <label class="avatar-upload" id="contact-thumb" title="Upload their photo">
+          <span class="avatar-upload-icon">🖼️<small>+</small></span>
+          <input id="contact-photo" type="file" accept="image/*" hidden />
+        </label>
+        <div class="contact-fields">
+          <input id="contact-name" type="text" placeholder="Contact name" />
+          <input id="contact-status" type="text" placeholder="Status — e.g. online, Active now" />
+        </div>
+        <button id="contact-photo-clear" class="clear-photo" title="Remove photo" hidden>✕</button>
+      </div>
+      <div class="participant-row your-profile">
+        <div id="my-thumb" class="avatar-thumb me" title="Your photo"></div>
+        <input id="my-name" type="text" placeholder="Your name (shown in TikTok)" />
+        <label class="photo-btn" title="Upload your photo">
+          📷<input id="my-photo" type="file" accept="image/*" hidden />
+        </label>
+        <button id="my-photo-clear" class="clear-photo" title="Remove photo" hidden>✕</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Messages</h2>
+      <div id="message-list" class="message-list"></div>
+      <div class="add-buttons">
+        <button id="add-them-btn" class="ghost">+ Contact message</button>
+        <button id="add-me-btn" class="ghost">+ Your message</button>
+      </div>
+      <div class="anim-toggles">
+        <label class="toggle-row">
+          <span>Typing indicator</span>
+          <input type="checkbox" id="typing-toggle" checked />
+        </label>
+        <label class="toggle-row">
+          <span>Keyboard typing animation</span>
+          <input type="checkbox" id="keyboard-toggle" checked />
+        </label>
+        <label class="toggle-row">
+          <span>Sound effects</span>
+          <input type="checkbox" id="sounds-toggle" checked />
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
       <h2>Device</h2>
       <label class="field">
         <span>Simulated device</span>
@@ -196,50 +247,6 @@
         <span>Background color</span>
         <input type="color" id="bg-color" value="#17191e" />
       </label>
-    </section>
-
-    <section class="panel">
-      <h2>Conversation</h2>
-      <label class="field">
-        <span>Chat app</span>
-        <select id="app-select"></select>
-      </label>
-      <div class="field">
-        <span>Participants</span>
-        <div class="participant-row">
-          <div id="contact-thumb" class="avatar-thumb them" title="Their photo"></div>
-          <input id="contact-name" type="text" placeholder="Contact name" />
-          <label class="photo-btn" title="Upload photo">
-            📷<input id="contact-photo" type="file" accept="image/*" hidden />
-          </label>
-          <button id="contact-photo-clear" class="clear-photo" title="Remove photo" hidden>✕</button>
-        </div>
-        <div class="participant-row">
-          <div id="my-thumb" class="avatar-thumb me" title="Your photo"></div>
-          <input id="my-name" type="text" placeholder="Your name" />
-          <label class="photo-btn" title="Upload photo">
-            📷<input id="my-photo" type="file" accept="image/*" hidden />
-          </label>
-          <button id="my-photo-clear" class="clear-photo" title="Remove photo" hidden>✕</button>
-        </div>
-      </div>
-      <label class="toggle-row">
-        <span>Typing indicator</span>
-        <input type="checkbox" id="typing-toggle" checked />
-      </label>
-      <label class="toggle-row">
-        <span>Keyboard typing animation</span>
-        <input type="checkbox" id="keyboard-toggle" checked />
-      </label>
-      <label class="toggle-row">
-        <span>Sound effects</span>
-        <input type="checkbox" id="sounds-toggle" checked />
-      </label>
-      <div id="message-list" class="message-list"></div>
-      <div class="add-buttons">
-        <button id="add-them-btn" class="ghost">+ Received</button>
-        <button id="add-me-btn" class="ghost">+ Sent</button>
-      </div>
     </section>
 
     <section class="panel">
@@ -455,10 +462,10 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="js/devices.js?v=8"></script>
-<script src="js/sounds.js?v=8"></script>
-<script src="js/renderer.js?v=8"></script>
-<script src="js/export.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/devices.js?v=9"></script>
+<script src="js/sounds.js?v=9"></script>
+<script src="js/renderer.js?v=9"></script>
+<script src="js/export.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>
