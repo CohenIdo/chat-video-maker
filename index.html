@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fake Chat Video Maker — WhatsApp, iMessage, Instagram DM Animations | Conversation Simulator</title>
+<meta name="description" content="Create realistic fake chat conversations for WhatsApp, iMessage, Instagram DM, Messenger and TikTok — animate them with typing indicators and export as HD, Full HD or 4K video. Free, no watermark, runs in your browser." />
+<meta name="keywords" content="fake chat generator, chat video maker, whatsapp chat generator, fake text message video, imessage generator, instagram dm generator, chat animation maker, fake conversation video, texting story video maker" />
+<link rel="canonical" href="https://cohenido.github.io/chat-video-maker/" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Conversation Simulator" />
+<meta property="og:title" content="Fake Chat Video Maker — WhatsApp, iMessage, Instagram DM Animations" />
+<meta property="og:description" content="Create realistic animated chat conversations and export them as HD/4K video. WhatsApp, iMessage, Instagram DM, Messenger & TikTok skins. Free, in your browser." />
+<meta property="og:url" content="https://cohenido.github.io/chat-video-maker/" />
+<meta property="og:image" content="https://cohenido.github.io/chat-video-maker/assets/og-image.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Fake Chat Video Maker — Conversation Simulator" />
+<meta name="twitter:description" content="Animate fake WhatsApp, iMessage, Instagram DM, Messenger & TikTok chats and export as crisp HD–4K video. Free, no watermark." />
+<meta name="twitter:image" content="https://cohenido.github.io/chat-video-maker/assets/og-image.jpg" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Conversation Simulator — Fake Chat Video Maker",
+  "url": "https://cohenido.github.io/chat-video-maker/",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Create realistic fake chat conversations for WhatsApp, iMessage, Instagram DM, Messenger and TikTok, animate them with typing indicators, and export as HD, Full HD, 2K or 4K video with device frames for iPhone and Android.",
+  "featureList": [
+    "WhatsApp, iMessage, Instagram DM, Messenger, TikTok and Android Messages chat styles",
+    "iPhone 16/15/SE, Samsung Galaxy S25, Google Pixel 9 device presets with Dynamic Island and punch-hole",
+    "Typing indicator and message pop animations",
+    "Custom participant names and photos",
+    "Portrait, landscape and 3D side-view angle",
+    "Export video in 720p, 1080p, 2K or 4K with no watermark"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I make a fake WhatsApp chat video?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Choose WhatsApp as the chat app, pick a phone like the iPhone 16 Pro Max or Galaxy S25, type your messages for both participants, then press Export Video. The conversation animates with typing indicators and downloads as an MP4 video." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the exported video watermarked?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Exported videos have no watermark and match the exact device resolution you choose, up to 4K." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which chat apps can I simulate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "WhatsApp, iMessage, Instagram DM, Facebook Messenger, TikTok DM and Android Messages — each with authentic bubbles, headers and input bars in light or dark mode." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it free? Do I need to sign up?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, it is completely free and requires no account. Everything runs locally in your browser — your conversations are never uploaded to a server." }
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="css/style.css?v=4" />
+
+<!-- Monetization: set your AdSense publisher ID here after approval, e.g. 'ca-pub-1234567890123456' -->
+<script>window.ADSENSE_CLIENT = '';</script>
+<script>
+(function () {
+  if (!window.ADSENSE_CLIENT) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + window.ADSENSE_CLIENT;
+  s.crossOrigin = 'anonymous';
+  document.head.appendChild(s);
+  window.addEventListener('load', function () {
+    document.querySelectorAll('.ad-slot').forEach(function (slot) {
+      slot.style.display = 'block';
+      var ins = document.createElement('ins');
+      ins.className = 'adsbygoogle';
+      ins.style.display = 'block';
+      ins.setAttribute('data-ad-client', window.ADSENSE_CLIENT);
+      ins.setAttribute('data-ad-format', 'auto');
+      ins.setAttribute('data-full-width-responsive', 'true');
+      slot.appendChild(ins);
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  });
+})();
+</script>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <header class="brand">
+      <div class="logo">💬</div>
+      <div>
+        <h1>Conversation Simulator</h1>
+        <p>Animate chats · export as video</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>Device</h2>
+      <label class="field">
+        <span>Simulated device</span>
+        <select id="device-select"></select>
+      </label>
+      <div id="custom-device-size" class="dual-input" hidden>
+        <label class="field"><span>Width px</span><input id="custom-w" type="number" min="16" step="2" /></label>
+        <label class="field"><span>Height px</span><input id="custom-h" type="number" min="16" step="2" /></label>
+      </div>
+      <div class="field">
+        <span>Orientation</span>
+        <div class="segmented">
+          <button id="portrait-btn" class="active">Portrait</button>
+          <button id="landscape-btn">Landscape</button>
+        </div>
+      </div>
+      <div class="field">
+        <span>Side view angle <b id="angle-label" class="angle-value">0°</b></span>
+        <input id="angle-slider" type="range" min="-45" max="45" step="1" value="0" />
+        <div class="angle-presets">
+          <button id="angle-left" class="ghost small">↺ 45° left</button>
+          <button id="angle-zero" class="ghost small">0°</button>
+          <button id="angle-right" class="ghost small">45° right ↻</button>
+        </div>
+      </div>
+      <label class="toggle-row">
+        <span>Phone frame</span>
+        <input type="checkbox" id="frame-toggle" checked />
+      </label>
+      <label class="toggle-row">
+        <span>Dark mode chat</span>
+        <input type="checkbox" id="dark-toggle" />
+      </label>
+      <label class="field">
+        <span>Canvas background</span>
+        <select id="bg-style">
+          <option value="gradient">Studio gradient</option>
+          <option value="solid">Solid color</option>
+        </select>
+      </label>
+      <label class="field" id="bg-color-row" hidden>
+        <span>Background color</span>
+        <input type="color" id="bg-color" value="#17191e" />
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>Conversation</h2>
+      <label class="field">
+        <span>Chat app</span>
+        <select id="app-select"></select>
+      </label>
+      <div class="field">
+        <span>Participants</span>
+        <div class="participant-row">
+          <div id="contact-thumb" class="avatar-thumb them" title="Their photo"></div>
+          <input id="contact-name" type="text" placeholder="Contact name" />
+          <label class="photo-btn" title="Upload photo">
+            📷<input id="contact-photo" type="file" accept="image/*" hidden />
+          </label>
+          <button id="contact-photo-clear" class="clear-photo" title="Remove photo" hidden>✕</button>
+        </div>
+        <div class="participant-row">
+          <div id="my-thumb" class="avatar-thumb me" title="Your photo"></div>
+          <input id="my-name" type="text" placeholder="Your name" />
+          <label class="photo-btn" title="Upload photo">
+            📷<input id="my-photo" type="file" accept="image/*" hidden />
+          </label>
+          <button id="my-photo-clear" class="clear-photo" title="Remove photo" hidden>✕</button>
+        </div>
+      </div>
+      <label class="toggle-row">
+        <span>Typing indicator</span>
+        <input type="checkbox" id="typing-toggle" checked />
+      </label>
+      <div id="message-list" class="message-list"></div>
+      <div class="add-buttons">
+        <button id="add-them-btn" class="ghost">+ Received</button>
+        <button id="add-me-btn" class="ghost">+ Sent</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Export</h2>
+      <label class="field">
+        <span>Resolution</span>
+        <select id="export-res-select"></select>
+      </label>
+      <div id="custom-export-size" class="dual-input" hidden>
+        <label class="field"><span>Width px</span><input id="export-w" type="number" min="16" step="2" /></label>
+        <label class="field"><span>Height px</span><input id="export-h" type="number" min="16" step="2" /></label>
+      </div>
+      <div class="dual-input">
+        <label class="field">
+          <span>Frame rate</span>
+          <select id="fps-select">
+            <option value="30">30 fps</option>
+            <option value="60" selected>60 fps</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Speed</span>
+          <select id="speed-select">
+            <option value="0.5">0.5×</option>
+            <option value="0.75">0.75×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+      </div>
+      <button id="export-btn" class="primary">⬇ Export Video</button>
+      <div id="export-progress" class="progress" hidden>
+        <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
+        <div class="progress-row">
+          <span id="progress-label">Recording…</span>
+          <button id="cancel-export-btn" class="ghost small">Cancel</button>
+        </div>
+        <div class="progress-hint">Recording happens in real time — keep this tab visible for best results.</div>
+      </div>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <div class="stage-top">
+      <span id="res-badge" class="badge"></span>
+      <span id="export-badge" class="badge subtle"></span>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="preview-canvas"></canvas>
+    </div>
+    <div class="transport">
+      <button id="restart-btn" title="Restart">⏮</button>
+      <button id="play-btn" title="Pause">⏸</button>
+      <input id="scrubber" type="range" min="0" max="1000" value="0" />
+      <span id="time-label" class="time">0.0s</span>
+    </div>
+  </main>
+
+</div>
+
+<!-- SEO / content section (also required for ad-network approval) -->
+<section class="content-section">
+  <div class="content-inner">
+    <div class="ad-slot" style="display:none"></div>
+
+    <h2>Create Fake Chat Videos in Your Browser — Free, No Watermark</h2>
+    <p>
+      Conversation Simulator is a free <strong>fake chat video maker</strong>. Write a conversation
+      between two people, watch it play out with realistic typing indicators and message
+      animations, and export it as a crisp MP4 video — perfect for TikTok texting stories,
+      YouTube Shorts, Instagram Reels, tutorials, memes and marketing mockups.
+    </p>
+
+    <h3>Supported chat apps</h3>
+    <p>
+      Simulate <strong>WhatsApp</strong>, <strong>iMessage</strong>, <strong>Instagram DM</strong>,
+      <strong>Facebook Messenger</strong>, <strong>TikTok DM</strong> and <strong>Android Messages</strong> —
+      each with authentic bubbles, headers, timestamps, read receipts and input bars, in light or dark mode.
+    </p>
+
+    <h3>Realistic devices</h3>
+    <p>
+      Preview your conversation on the iPhone 16 Pro Max, iPhone 16, iPhone 15, iPhone SE,
+      Samsung Galaxy S25 Ultra, Google Pixel 9 Pro and more — complete with Dynamic Island,
+      punch-hole cameras, status bars, rounded corners and an optional phone frame. Rotate to
+      landscape or tilt the camera up to 45° for a cinematic side view.
+    </p>
+
+    <h3>How to make a fake text conversation video</h3>
+    <ol>
+      <li>Pick a chat app (WhatsApp, iMessage, Instagram…) and a phone model.</li>
+      <li>Set the participants' names and photos.</li>
+      <li>Type the messages for each side — reorder or edit any time.</li>
+      <li>Watch the live animated preview with typing indicators.</li>
+      <li>Choose an export resolution (720p, 1080p, 2K or 4K) and press <em>Export Video</em>.</li>
+    </ol>
+
+    <h3>Frequently asked questions</h3>
+    <dl class="faq">
+      <dt>Is it really free?</dt>
+      <dd>Yes — free, no account, no watermark. Everything runs locally in your browser; your conversations never leave your device.</dd>
+      <dt>What video format do I get?</dt>
+      <dd>MP4 (H.264) in most browsers, WebM otherwise. The video matches the exact device resolution you pick, up to 4K.</dd>
+      <dt>Can I use the videos commercially?</dt>
+      <dd>Yes. You own what you create. Just don't use other people's trademarks or real identities in a misleading way.</dd>
+      <dt>Does it work on mobile?</dt>
+      <dd>Yes — the editor is responsive, though a desktop browser gives the smoothest export experience.</dd>
+    </dl>
+
+    <div class="ad-slot" style="display:none"></div>
+
+    <footer class="site-footer">
+      <span>© 2026 Conversation Simulator</span>
+      <nav>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+      </nav>
+      <span class="disclaimer">
+        Not affiliated with WhatsApp, Apple, Instagram, Meta, TikTok or Google.
+        All product names and logos are trademarks of their respective owners.
+        This tool is intended for creative and educational content — do not use it to deceive or defame.
+      </span>
+    </footer>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/devices.js?v=3"></script>
+<script src="js/renderer.js?v=5"></script>
+<script src="js/export.js?v=4"></script>
+<script src="js/app.js?v=3"></script>
+</body>
+</html>
