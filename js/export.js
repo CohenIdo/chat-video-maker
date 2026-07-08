@@ -88,7 +88,7 @@ const Exporter = {
           contentT = Math.min(contentT + dt * speed, timeline.duration);
           renderFrame(ctx, width, height, contentT, state, cache);
           if (audioStream) {
-            triggerTimelineSounds(Sounds, timeline, state.messages, state.showKeyboard, prevT, contentT);
+            triggerTimelineSounds(Sounds, timeline, state.messages, state.showKeyboard, prevT, contentT, state.app);
           }
           onProgress && onProgress(Math.min(1, contentT / timeline.duration));
           if (contentT >= timeline.duration) { clearInterval(timer); resolve(); }

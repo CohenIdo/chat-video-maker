@@ -110,7 +110,7 @@ function loop(now) {
       const dur = timelineDuration();
       if (playback.time >= dur + 0.6) playback.time = 0; // loop with a beat of rest
       if (state.soundsEnabled && Sounds.ctx && renderCache.timeline) {
-        triggerTimelineSounds(Sounds, renderCache.timeline, state.messages, state.showKeyboard, prevT, playback.time);
+        triggerTimelineSounds(Sounds, renderCache.timeline, state.messages, state.showKeyboard, prevT, playback.time, state.app);
       }
     }
     playback.lastFrame = now;
