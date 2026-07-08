@@ -964,12 +964,17 @@ function renderFrame(ctx, canvasW, canvasH, t, state, cache) {
   // ---- canvas background
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvasW, canvasH);
-  if (state.bgStyle === 'gradient') {
+  if (state.bgStyle === 'dark' || state.bgStyle === 'gradient') {
     const g = ctx.createLinearGradient(0, 0, canvasW, canvasH);
     g.addColorStop(0, '#20242e'); g.addColorStop(0.55, '#171a21'); g.addColorStop(1, '#22262f');
     ctx.fillStyle = g;
+  } else if (state.bgStyle === 'solid') {
+    ctx.fillStyle = state.bgColor || '#f2f4f9';
   } else {
-    ctx.fillStyle = state.bgColor || '#17191e';
+    // light studio (default)
+    const g = ctx.createLinearGradient(0, 0, canvasW, canvasH);
+    g.addColorStop(0, '#f6f7fb'); g.addColorStop(0.5, '#e9edf6'); g.addColorStop(1, '#f1f0fa');
+    ctx.fillStyle = g;
   }
   ctx.fillRect(0, 0, canvasW, canvasH);
 

@@ -24,8 +24,8 @@ const state = {
   contactPhoto: null,
   myName: 'Me',
   myPhoto: null,
-  bgStyle: 'gradient',
-  bgColor: '#17191e',
+  bgStyle: 'light',
+  bgColor: '#eef1f7',
   customDeviceWidth: 1080,
   customDeviceHeight: 1920,
   exportRes: 'native',
@@ -41,6 +41,7 @@ try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
   if (saved && Array.isArray(saved.messages)) Object.assign(state, saved);
 } catch { /* fresh start */ }
+if (state.bgStyle === 'gradient') state.bgStyle = 'light'; // migrate old dark default
 
 // Shared-conversation links: #s=<base64 json> overrides the saved state.
 try {
